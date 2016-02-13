@@ -1,0 +1,50 @@
+{
+  "name": "browserify-require-async",
+  "version": "0.1.0",
+  "description": "Browserify transform to handle require.async calls.",
+  "main": "index.js",
+  "author": "Ivan Nikolić <niksy5@gmail.com> (http://ivannikolic.com/)",
+  "license": "MIT",
+  "dependencies": {
+    "through2": "^2.0.0",
+    "falafel": "^1.2.0",
+    "is-stream": "^1.0.1",
+    "lodash": "^3.10.1",
+    "pkg-conf": "^1.0.1",
+    "es3ify": "^0.1.4",
+    "hasha": "^2.2.0",
+    "is-relative-path": "^1.0.0",
+    "lie": "^3.0.1",
+    "little-loader": "^0.1.0",
+    "mkdirp": "^0.5.1"
+  },
+  "browserify": {
+    "transform": [
+      "es3ify"
+    ]
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "eslint": "^1.10.3",
+    "eslint-config-niksy": "^1.0.2"
+  },
+  "scripts": {
+    "lint": "eslint index.js lib/**/*",
+    "test": "npm run lint"
+  },
+  "keywords": [
+    "browserify",
+    "require",
+    "async"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niksy/browserify-require-async.git"
+  },
+  "bugs": {
+    "url": "https://github.com/niksy/browserify-require-async/issues"
+  },
+  "homepage": "https://github.com/niksy/browserify-require-async#readme"
+}
