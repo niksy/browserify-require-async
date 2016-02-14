@@ -26,18 +26,6 @@ function isRequireAsync ( node ) {
 
 }
 
-function isLoaderModule ( node, file ) {
-
-	var id = node.id;
-
-	return file === resolve.sync(meta.name + '/loader', { filename: file }) &&
-	id &&
-	node.type === 'VariableDeclarator' &&
-	id.type === 'Identifier' &&
-	id.name === '__requireAsyncUrlRoot';
-
-}
-
 function getDepsChain ( deps, file ) {
 	return _.chain(deps)
 		.map(function ( dep ) {
@@ -78,7 +66,11 @@ function getAllBundles ( depsChain ) {
 
 function transform ( file, opts ) {
 
+	var rootUrl;
 	config = _.extend({}, defaultConfig, opts);
+
+	rootUrl = url.parse(config.url);
+	rootUrl.pathname = path.join(rootUrl.pathname, '/');
 
 	return through(function ( buf, enc, next ) {
 
@@ -93,17 +85,11 @@ function transform ( file, opts ) {
 
 		transformedContent = falafel(content, function ( node ) {
 
-			var arg, deps, depsChain, newBundles, allBundles, rootUrl;
-
-			if ( isLoaderModule(node, file) ) {
-				rootUrl = url.parse(config.url);
-				rootUrl.pathname = path.join(rootUrl.pathname, '/');
-				node.init.update(JSON.stringify(url.format(rootUrl)));
-			}
+			var arg, deps, depsChain, newBundles, allBundles;
 
 			if ( isRequireAsync(node) ) {
 
-				node.callee.update('require(\'' + meta.name + '/loader\')(require)');
+				node.callee.update('require(\'' + meta.name + '/loader\')(require, ' + JSON.stringify(url.format(rootUrl)) + ')');
 				arg = node.arguments[0];
 
 				if ( arg.type === 'ArrayExpression' ) {

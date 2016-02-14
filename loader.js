@@ -1,9 +1,10 @@
-var __requireAsyncUrlRoot = '';
+/* eslint-disable no-implicit-coercion, no-shadow */
+
 var Promise = require('lie');
 var loader = require('little-loader');
 var cache = global.__requireAsyncCache = global.__requireAsyncCache || {};
 
-function createBundlePromise ( opts, _require ) {
+function createBundlePromise ( opts, _require, urlRoot ) {
 
 	return Promise.resolve()
 		.then(function () {
@@ -11,7 +12,7 @@ function createBundlePromise ( opts, _require ) {
 		})
 		.catch(function () {
 			return new Promise(function ( resolve, reject ) {
-				loader(__requireAsyncUrlRoot + opts.url, function ( err ) {
+				loader(urlRoot + opts.url, function ( err ) {
 					if ( err ) {
 						return reject(err);
 					}
@@ -33,17 +34,18 @@ function createBundlePromise ( opts, _require ) {
 		});
 }
 
-module.exports = function ( _require ) {
+module.exports = function ( _require, urlRoot ) {
 
 	return function ( el, cb, errCb ) {
 
 		var bundles = [].concat(el);
 		var promises = [];
+		var bundle, i, bundlesLength;
 
-		for ( var i = 0, bundlesLength = bundles.length; i < bundlesLength; i++ ) {
-			var bundle = bundles[i];
+		for ( i = 0, bundlesLength = bundles.length; i < bundlesLength; i++ ) {
+			bundle = bundles[i];
 			if ( !cache[bundle.hash] ) {
-				cache[bundle.hash] = createBundlePromise(bundle, _require);
+				cache[bundle.hash] = createBundlePromise(bundle, _require, urlRoot);
 			}
 			promises.push(cache[bundle.hash]);
 		}
