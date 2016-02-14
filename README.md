@@ -110,7 +110,7 @@ This callback is useful if you need to define some custom transforms, requires, 
 
 | Argument | Type | Description |
 | --- | --- | --- |
-| `instance` | `Stream` | Browserify instance, with original instance options applied. |
+| `instance` | `Stream` | Browserify instance, with some original instance options applied (`debug`). |
 | `opts` | `Object` | File and directory information. |
 
 #### `opts`
