@@ -1,6 +1,8 @@
 # browserify-require-async
 
-Browserify transform to handle [`require.async`](require-async) calls. **Highly experimental.**
+Browserify transform to handle [`require.async`](require-async) calls.
+
+**Highly experimental.**
 
 ## Installation
 
@@ -297,6 +299,19 @@ b.bundle().pipe(fs.createWriteStream('./bundle.js'));
 main.bundle().pipe(fs.createWriteStream('./main.bundle.js'));
 ```
 
+## Q&A
+
+### This is similar to [Webpack code splitting][webpack-code-splitting]?
+
+Yes, but with different version of syntax and aligned with standard Browserify features.
+
+### Why not `require.ensure` like Webpack?
+
+I’ve found it harder to parse file content for all the standard `require` references and transforming them to custom `require` calls, but it can probably be done.
+It’s also possible to create [Babel][babel] plugin which will transform `require.ensure` to `require.async` and then afterwards apply this transformation.
+
+Also, I think that `require.async` closesly aligns with [proposed ES6 `System.import` syntax][es6-system-import] (uses Promises, callback arguments are exports, …) so it’s easier to reason about and write code which is somewhat future-friendly. And also, it’s a candidate for Babel plugin, even easier to write than `require.ensure` one.
+
 ## References
 
 * [`require.async` rules - 2.V][require-async-rules]
@@ -316,3 +331,6 @@ MIT © [Ivan Nikolić](http://ivannikolic.com)
 [node-stream]: https://nodejs.org/api/stream.html
 [gulp]: http://gulpjs.com/
 [vinyl]: https://github.com/gulpjs/vinyl
+[webpack-code-splitting]: https://webpack.github.io/docs/code-splitting.html
+[babel]: http://babeljs.io/
+[es6-system-import]: http://exploringjs.com/es6/ch_modules.html#_loader-method-importing-modules
