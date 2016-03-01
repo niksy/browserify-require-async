@@ -84,16 +84,17 @@ Default: ` `
 
 Directory where asynchronously loaded modules will be written.
 
-### outputFile
+### setOutputFile
 
 Type: `Function`  
 Returns: `String`
 
-File name of the module.
+Set file name of the module. By default, file name is created as MD5 hash of filename and last modified time.
 
 | Argument | Type | Description |
 | --- | --- | --- |
 | `file` | `String` | Name of the module file. |
+| `hash` | `String` | MD5 hash of filename and last modified time. |
 
 ### extensions
 
@@ -306,15 +307,14 @@ By default, generated filename is a hash of changed file stats. This is inconven
 ```js
 var browserify = require('browserify');
 var bra = require('browserify-require-async');
-var hash = 'foo';
 
 var b = browserify('./index.js');
 b.transform(bra, {
-	outputFile: function ( file ) {
+	setOutputFile: function ( file, hash ) {
 		if ( process.env.NODE_ENV === 'development' ) {
 			return file + '.js';
 		}
-		return hash + file + '.js';
+		return hash + '.js';
 	}
 });
 
