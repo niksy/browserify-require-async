@@ -83,36 +83,40 @@ function transform ( file, opts ) {
 			return;
 		}
 
-		transformedContent = falafel(content, function ( node ) {
+		try {
+			transformedContent = falafel(content, function ( node ) {
 
-			var arg, deps, depsChain, newBundles, allBundles;
+				var arg, deps, depsChain, newBundles, allBundles;
 
-			if ( isRequireAsync(node) ) {
+				if ( isRequireAsync(node) ) {
 
-				node.callee.update('require(' + JSON.stringify(meta.name + '/loader') + ')(require, ' + JSON.stringify(rootUrl) + ')');
-				arg = node.arguments[0];
+					node.callee.update('require(' + JSON.stringify(meta.name + '/loader') + ')(require, ' + JSON.stringify(rootUrl) + ')');
+					arg = node.arguments[0];
 
-				if ( arg.type === 'ArrayExpression' ) {
-					deps = _.pluck(arg.elements, 'value');
-				} else {
-					deps = [arg.value];
+					if ( arg.type === 'ArrayExpression' ) {
+						deps = _.pluck(arg.elements, 'value');
+					} else {
+						deps = [arg.value];
+					}
+
+					depsChain = getDepsChain(deps, file);
+					newBundles = getNewBundles(depsChain);
+					allBundles = getAllBundles(depsChain);
+
+					_.invoke(newBundles, 'create');
+					_.invoke(newBundles, 'write');
+
+					arg.update(JSON.stringify(_.invoke(allBundles, 'getConfig')));
+
 				}
 
-				depsChain = getDepsChain(deps, file);
-				newBundles = getNewBundles(depsChain);
-				allBundles = getAllBundles(depsChain);
+			});
 
-				_.invoke(newBundles, 'create');
-				_.invoke(newBundles, 'write');
-
-				arg.update(JSON.stringify(_.invoke(allBundles, 'getConfig')));
-
-			}
-
-		});
-
-		this.push(transformedContent.toString());
-		next();
+			this.push(transformedContent.toString());
+			next();
+		} catch ( err ) {
+			next(err, content);
+		}
 
 	});
 
