@@ -17,6 +17,7 @@
     "lodash": "^3.10.1",
     "mkdirp": "^0.5.1",
     "pkg-conf": "^1.0.1",
+    "remove-trailing-slash": "^0.1.0",
     "through2": "^2.0.0"
   },
   "browserify": {

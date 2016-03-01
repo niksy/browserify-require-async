@@ -4,6 +4,7 @@ var resolve = require('browser-resolve');
 var through = require('through2');
 var falafel = require('falafel');
 var _ = require('lodash');
+var removeTrailingSlash = require('remove-trailing-slash');
 var defaultConfig = require('./lib/config');
 var meta = require('./lib/meta');
 var Bundle = require('./lib/bundle');
@@ -69,8 +70,7 @@ function transform ( file, opts ) {
 	var rootUrl;
 	config = _.extend({}, defaultConfig, opts);
 
-	rootUrl = url.parse(config.url);
-	rootUrl.pathname = path.join(rootUrl.pathname, '/');
+	rootUrl = removeTrailingSlash(config.url) + '/';
 
 	return through(function ( buf, enc, next ) {
 
@@ -89,7 +89,7 @@ function transform ( file, opts ) {
 
 			if ( isRequireAsync(node) ) {
 
-				node.callee.update('require(\'' + meta.name + '/loader\')(require, ' + JSON.stringify(url.format(rootUrl)) + ')');
+				node.callee.update('require(' + JSON.stringify(meta.name + '/loader') + ')(require, ' + JSON.stringify(rootUrl) + ')');
 				arg = node.arguments[0];
 
 				if ( arg.type === 'ArrayExpression' ) {
