@@ -1,6 +1,6 @@
 {
   "name": "browserify-require-async",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Browserify transform to handle require.async calls.",
   "main": "index.js",
   "author": "Ivan Nikolić <niksy5@gmail.com> (http://ivannikolic.com/)",
