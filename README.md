@@ -112,7 +112,7 @@ This callback is useful if you need to define some custom transforms, requires, 
 
 | Argument | Type | Description |
 | --- | --- | --- |
-| `instance` | `Stream` | Browserify instance, with some original instance options applied (`debug`). |
+| `instance` | `Object` | Browserify instance, with some original instance options applied (`debug`). |
 | `opts` | `Object` | File and directory information. |
 
 #### `opts`
@@ -297,6 +297,28 @@ main.external('browserify-require-async/loader');
 
 b.bundle().pipe(fs.createWriteStream('./bundle.js'));
 main.bundle().pipe(fs.createWriteStream('./main.bundle.js'));
+```
+
+### Watch mode
+
+By default, generated filename is a hash of changed file stats. This is inconvenient in development/watch mode since bundle source won’t be properly updated. To avoid this, you can have condition in watch mode and production mode which will produce different output file.
+
+```js
+var browserify = require('browserify');
+var bra = require('browserify-require-async');
+var hash = 'foo';
+
+var b = browserify('./index.js');
+b.transform(bra, {
+	outputFile: function ( file ) {
+		if ( process.env.NODE_ENV === 'development' ) {
+			return file + '.js';
+		}
+		return hash + file + '.js';
+	}
+});
+
+b.bundle().pipe(fs.createWriteStream('./bundle.js'));
 ```
 
 ## Q&A
