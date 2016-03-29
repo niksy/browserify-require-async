@@ -68,6 +68,7 @@ function getAllBundles ( depsChain ) {
 function transform ( file, opts ) {
 
 	var rootUrl;
+	var newBundles = [];
 	config = _.extend({}, defaultConfig, opts);
 
 	rootUrl = removeTrailingSlash(config.url) + '/';
@@ -86,7 +87,7 @@ function transform ( file, opts ) {
 		try {
 			transformedContent = falafel(content, function ( node ) {
 
-				var arg, deps, depsChain, newBundles, allBundles;
+				var arg, deps, depsChain, allBundles;
 
 				if ( isRequireAsync(node) ) {
 
@@ -100,11 +101,8 @@ function transform ( file, opts ) {
 					}
 
 					depsChain = getDepsChain(deps, file);
-					newBundles = getNewBundles(depsChain);
+					newBundles = newBundles.concat(getNewBundles(depsChain));
 					allBundles = getAllBundles(depsChain);
-
-					_.invoke(newBundles, 'create');
-					_.invoke(newBundles, 'write');
 
 					arg.update(JSON.stringify(_.invoke(allBundles, 'getConfig')));
 
@@ -118,6 +116,10 @@ function transform ( file, opts ) {
 			next(err, content);
 		}
 
+	}, function ( cb ) {
+		_.invoke(newBundles, 'create');
+		_.invoke(newBundles, 'write');
+		cb();
 	});
 
 }
