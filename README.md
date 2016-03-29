@@ -257,28 +257,12 @@ Here’s definition for asynchronous module collapsing.
 
 ```js
 var browserify = require('browserify');
-var collapse = require('bundle-collapse/plugin');
+var collapse = require('bundle-collapser-extended/plugin');
 
 var b = browserify();
 b.plugin(collapse, {
-	custom: [
-		{
-			replacement: '"name":%s',
-			value: function ( node ) {
-				return node.value.value;
-			},
-			check: function ( node ) {
-
-				var props = (node.parent && node.parent.properties) || [];
-				var isAsync = props.filter(function ( prop ) {
-					return prop.key.value === '__requireAsync';
-				}).length !== 0;
-
-				return node.type === 'Property' &&
-				node.key.value === 'name' &&
-				isAsync;
-			}
-		}
+	preset: [
+		'browserify-require-async'
 	]
 });
 ```
@@ -346,7 +330,7 @@ MIT © [Ivan Nikolić](http://ivannikolic.com)
 [require-async-rules]: https://github.com/kriskowal/uncommonjs/blob/master/modules/specification.md#guarantees-made-by-module-interpreters
 [polyfill]: https://github.com/pinf/require.async
 [bundle-collapser]: https://github.com/substack/bundle-collapser
-[bundle-collapser-fork]: https://github.com/niksy/bundle-collapser/tree/custom-replacements
+[bundle-collapser-fork]: https://github.com/niksy/bundle-collapser-extended
 [bundle-collapser-issue]: https://github.com/substack/bundle-collapser/issues/16
 [custom-loader]: loader.js
 [config]: #api
