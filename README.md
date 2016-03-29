@@ -93,8 +93,15 @@ Set file name of the module. By default, file name is created as MD5 hash of fil
 
 | Argument | Type | Description |
 | --- | --- | --- |
-| `file` | `String` | Name of the module file. |
 | `hash` | `String` | MD5 hash of filename and last modified time. |
+| `opts` | `Object` | File and directory information. |
+
+#### `opts`
+
+| Argument | Type | Description |
+| --- | --- | --- |
+| `inputDir` | `String` | Input directory. |
+| `inputFile` | `String` | Input file. |
 
 ### extensions
 
@@ -294,9 +301,9 @@ var bra = require('browserify-require-async');
 
 var b = browserify('./index.js');
 b.transform(bra, {
-	setOutputFile: function ( file, hash ) {
+	setOutputFile: function ( hash, opts ) {
 		if ( process.env.NODE_ENV === 'development' ) {
-			return file + '.js';
+			return opts.inputFile;
 		}
 		return hash + '.js';
 	}
