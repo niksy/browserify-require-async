@@ -33,8 +33,7 @@
     "eslint-config-niksy": "^1.0.2"
   },
   "scripts": {
-    "lint": "eslint index.js loader.js lib/**/*",
-    "test": "npm run lint"
+    "test": "eslint {index,loader,lib/**/*}.js"
   },
   "keywords": [
     "browserify",
