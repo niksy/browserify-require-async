@@ -5,6 +5,7 @@ var through = require('through2');
 var falafel = require('falafel');
 var _ = require('lodash');
 var removeTrailingSlash = require('remove-trailing-slash');
+var multimatch = require('multimatch');
 var defaultConfig = require('./lib/config');
 var meta = require('./lib/meta');
 var Bundle = require('./lib/bundle');
@@ -12,7 +13,8 @@ var config;
 var instanceCache = [];
 
 function shouldParseFile ( file ) {
-	return _.contains(config.extensions, path.extname(resolve.sync(file, { filename: file })));
+	var fullFilePath = resolve.sync(file, { filename: file });
+	return _.contains(config.extensions, path.extname(fullFilePath)) && !multimatch(fullFilePath, config.exclude).length;
 }
 
 function isRequireAsync ( node ) {

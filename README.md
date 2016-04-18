@@ -110,6 +110,13 @@ Default: `['.js']`
 
 List of file extensions which will be considered when parsing module content.
 
+### exclude
+
+Type: `Array`  
+Default: `[]`
+
+List of [multimatch][multimatch] expressions (files) which will be exluded from parsing. Useful when you use [recursive parsing](#first-level-only) or you want to exlude `node_modules` files.
+
 ### looseParseMode
 
 Type: `Boolean`  
@@ -354,6 +361,7 @@ MIT © [Ivan Nikolić](http://ivannikolic.com)
 [webpack-code-splitting]: https://webpack.github.io/docs/code-splitting.html
 [babel]: http://babeljs.io/
 [es6-system-import]: http://exploringjs.com/es6/ch_modules.html#_loader-method-importing-modules
+[multimatch]: https://github.com/sindresorhus/multimatch
 [acorn]: https://github.com/ternjs/acorn
 [falafel]: https://github.com/substack/node-falafel
 [acorn-loose-mode]: https://github.com/ternjs/acorn#distacorn_loosejs
