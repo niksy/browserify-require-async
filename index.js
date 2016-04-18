@@ -1,5 +1,5 @@
 var path = require('path');
-var url = require('url');
+var acornLoose = require('acorn/dist/acorn_loose');
 var resolve = require('browser-resolve');
 var through = require('through2');
 var falafel = require('falafel');
@@ -67,53 +67,66 @@ function getAllBundles ( depsChain ) {
 
 function transform ( file, opts ) {
 
-	var rootUrl;
+	var rootUrl, parseContent;
 	var newBundles = [];
 	config = _.extend({}, defaultConfig, opts);
-
 	rootUrl = removeTrailingSlash(config.url) + '/';
+
+	parseContent = function ( content, options, next ) {
+
+		var transformedContent = falafel(content, options, function ( node ) {
+
+			var arg, deps, depsChain, allBundles;
+
+			if ( isRequireAsync(node) ) {
+
+				node.callee.update('require(' + JSON.stringify(meta.name + '/loader') + ')(require, ' + JSON.stringify(rootUrl) + ')');
+				arg = node.arguments[0];
+
+				if ( arg.type === 'ArrayExpression' ) {
+					deps = _.pluck(arg.elements, 'value');
+				} else {
+					deps = [arg.value];
+				}
+
+				depsChain = getDepsChain(deps, file);
+				newBundles = newBundles.concat(getNewBundles(depsChain));
+				allBundles = getAllBundles(depsChain);
+
+				arg.update(JSON.stringify(_.invoke(allBundles, 'getConfig')));
+
+			}
+
+		});
+
+		next(null, transformedContent.toString());
+
+	};
 
 	return through(function ( buf, enc, next ) {
 
 		var content = buf.toString('utf8');
-		var transformedContent;
 
 		if ( !shouldParseFile(file) ) {
-			this.push(content);
-			next();
+			next(null, content);
 			return;
 		}
 
 		try {
-			transformedContent = falafel(content, function ( node ) {
-
-				var arg, deps, depsChain, allBundles;
-
-				if ( isRequireAsync(node) ) {
-
-					node.callee.update('require(' + JSON.stringify(meta.name + '/loader') + ')(require, ' + JSON.stringify(rootUrl) + ')');
-					arg = node.arguments[0];
-
-					if ( arg.type === 'ArrayExpression' ) {
-						deps = _.pluck(arg.elements, 'value');
-					} else {
-						deps = [arg.value];
-					}
-
-					depsChain = getDepsChain(deps, file);
-					newBundles = newBundles.concat(getNewBundles(depsChain));
-					allBundles = getAllBundles(depsChain);
-
-					arg.update(JSON.stringify(_.invoke(allBundles, 'getConfig')));
-
+			// Try parsing with default Acorn settings
+			parseContent(content, {}, next);
+		} catch ( err1 ) {
+			if ( config.looseParseMode ) {
+				try	{
+					// If default Acorn parsing fails, try with loose mode
+					parseContent(content, { parser: { parse: acornLoose.parse_dammit } }, next);
+				} catch ( err2 ) {
+					// If all else fails, log error
+					next(err2, content);
 				}
-
-			});
-
-			this.push(transformedContent.toString());
-			next();
-		} catch ( err ) {
-			next(err, content);
+			} else {
+				next(err1, content);
+			}
 		}
 
 	}, function ( cb ) {

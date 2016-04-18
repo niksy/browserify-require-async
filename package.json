@@ -6,6 +6,7 @@
   "author": "Ivan Nikolić <niksy5@gmail.com> (http://ivannikolic.com/)",
   "license": "MIT",
   "dependencies": {
+    "acorn": "^1.2.2",
     "browser-resolve": "^1.11.1",
     "es3ify": "^0.1.4",
     "falafel": "^1.2.0",
