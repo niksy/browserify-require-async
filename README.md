@@ -113,9 +113,11 @@ List of file extensions which will be considered when parsing module content.
 ### exclude
 
 Type: `Array`  
-Default: `[]`
+Default: `['**/node_modules/**']`
 
 List of [multimatch][multimatch] expressions (files) which will be exluded from parsing. Useful when you use [recursive parsing](#first-level-only) or you want to exlude `node_modules` files.
+
+By default, all files inside `node_modules` (local or global) will be excluded, as per default Browserify behavior. If you want to operate on some module inside `node_modules`, you should explicitly declare it (e.g. to operate on files for module `foo`, use `!**/node_modules/foo/**`; note that using only that value will override default behavior, to have default and new behavior, you should concatenate arrays/values).
 
 ### looseParseMode
 
