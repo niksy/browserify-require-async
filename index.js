@@ -13,7 +13,7 @@ var config;
 var instanceCache = [];
 
 function shouldParseFile ( file ) {
-	var fullFilePath = resolve.sync(file, { filename: file });
+	var fullFilePath = resolve.sync(file, { filename: file, paths: config.modulePaths });
 	return _.contains(config.extensions, path.extname(fullFilePath)) && !multimatch(fullFilePath, config.exclude).length;
 }
 
@@ -34,7 +34,7 @@ function getDepsChain ( deps, file ) {
 		.map(function ( dep ) {
 			try {
 				return {
-					file: resolve.sync(dep, { filename: file }),
+					file: resolve.sync(dep, { filename: file, paths: config.modulePaths }),
 					expose: dep
 				};
 			} catch ( e ) {
@@ -71,7 +71,12 @@ function transform ( file, opts ) {
 
 	var rootUrl, parseContent;
 	var newBundles = [];
+
 	config = _.extend({}, defaultConfig, opts);
+	config.modulePaths = _.map(config._flags.paths, function ( p ) {
+		return path.resolve(process.cwd(), p);
+	});
+
 	rootUrl = removeTrailingSlash(config.url) + '/';
 
 	parseContent = function ( content, options, next ) {
