@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Ivan Nikolić <niksy5@gmail.com> (http://ivannikolic.com/)",
   "license": "MIT",
+  "engines": {
+    "node": ">=0.10.0"
+  },
   "dependencies": {
     "acorn": "^1.2.2",
     "browser-resolve": "^1.11.1",
