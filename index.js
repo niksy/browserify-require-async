@@ -69,7 +69,7 @@ function getAllBundles ( depsChain ) {
 
 function transform ( file, opts ) {
 
-	var rootUrl, parseContent;
+	var urlRoot, parseContent;
 	var newBundles = [];
 
 	config = _.extend({}, defaultConfig, opts);
@@ -77,7 +77,7 @@ function transform ( file, opts ) {
 		return path.resolve(process.cwd(), p);
 	});
 
-	rootUrl = removeTrailingSlash(config.url) + '/';
+	urlRoot = removeTrailingSlash(config.url) + '/';
 
 	parseContent = function ( content, options, next ) {
 
@@ -87,7 +87,10 @@ function transform ( file, opts ) {
 
 			if ( isRequireAsync(node) ) {
 
-				node.callee.update('require(' + JSON.stringify(meta.name + '/loader') + ')(require, ' + JSON.stringify(rootUrl) + ')');
+				node.callee.update('require(' + JSON.stringify(meta.name + '/loader') + ')(require, ' + JSON.stringify({
+					urlRoot: urlRoot,
+					rethrowError: Boolean(config.rethrowError)
+				}) + ')');
 				arg = node.arguments[0];
 
 				if ( arg.type === 'ArrayExpression' ) {

@@ -4,7 +4,7 @@ Browserify transform to handle [`require.async`](require-async) calls.
 
 **Highly experimental.**
 
-## Installation
+## Install
 
 ```sh
 npm install browserify-require-async --save
@@ -125,6 +125,13 @@ Type: `Boolean`
 Default: `false`
 
 By default, transform will use default settings when parsing files with [acorn][acorn] (through [falafel][falafel]). Sometimes there are files with specific syntax errors which can be adjusted with acorn’s [loose mode][acorn-loose-mode]. Setting this option to true will first use default settings, and if those settings fail, it will try to use loose mode settings, and if that fails, it will inform you of error which caused failed parsing.
+
+### rethrowError
+
+Type: `Boolean`  
+Default: `false`
+
+By default, loader expects you to handle errors in error callback and will "swallow" errors if they are not properly handled. Set this option to `true` to rethrow error and show those errors in e.g. your web console (useful for testing purposes).
 
 ### setup
 

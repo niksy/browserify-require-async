@@ -34,7 +34,7 @@ function createBundlePromise ( opts, _require, urlRoot ) {
 		});
 }
 
-module.exports = function ( _require, urlRoot ) {
+module.exports = function ( _require, options ) {
 
 	return function ( el, cb, errCb ) {
 
@@ -45,7 +45,7 @@ module.exports = function ( _require, urlRoot ) {
 		for ( i = 0, bundlesLength = bundles.length; i < bundlesLength; i++ ) {
 			bundle = bundles[i];
 			if ( !cache[bundle.hash] ) {
-				cache[bundle.hash] = createBundlePromise(bundle, _require, urlRoot);
+				cache[bundle.hash] = createBundlePromise(bundle, _require, options.urlRoot);
 			}
 			promises.push(cache[bundle.hash]);
 		}
@@ -55,6 +55,11 @@ module.exports = function ( _require, urlRoot ) {
 				return cb && cb.apply(null, reqs);
 			})
 			.catch(function ( err ) {
+				if ( options.rethrowError ) {
+					return setTimeout(function () {
+						throw err;
+					}, 0);
+				}
 				return errCb && errCb(err);
 			});
 
