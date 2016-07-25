@@ -9,7 +9,7 @@
     "node": ">=0.10.0"
   },
   "dependencies": {
-    "acorn": "^1.2.2",
+    "acorn": "^2.7.0",
     "browser-resolve": "^1.11.1",
     "es3ify": "^0.1.4",
     "falafel": "^1.2.0",

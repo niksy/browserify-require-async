@@ -1,4 +1,5 @@
 var path = require('path');
+var acorn = require('acorn');
 var acornLoose = require('acorn/dist/acorn_loose');
 var resolve = require('browser-resolve');
 var through = require('through2');
@@ -81,7 +82,7 @@ function transform ( file, opts ) {
 
 	parseContent = function ( content, options, next ) {
 
-		var transformedContent = falafel(content, options, function ( node ) {
+		var transformedContent = falafel(content, _.extend({}, { parser: acorn, ecmaVersion: 6 }, options), function ( node ) {
 
 			var arg, deps, depsChain, allBundles;
 
