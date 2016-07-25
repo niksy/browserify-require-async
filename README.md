@@ -143,7 +143,7 @@ This callback is useful if you need to define some custom transforms, requires, 
 
 | Argument | Type | Description |
 | --- | --- | --- |
-| `instance` | `Object` | Browserify instance, with some original instance options applied (`debug`). |
+| `instance` | `Browserify` | Browserify instance, with some original instance options applied (`debug`). |
 | `opts` | `Object` | File and directory information. |
 
 #### `opts`
@@ -157,7 +157,7 @@ This callback is useful if you need to define some custom transforms, requires, 
 
 ### bundle
 
-Type: `Function`
+Type: `Function`  
 Returns: Optionally `Stream`
 
 By default, transform will use standard Browserify bundling and writing to file system.
@@ -167,7 +167,7 @@ If you return [`Stream`][node-stream], transform will write it to proper output 
 
 | Argument | Type | Description |
 | --- | --- | --- |
-| `bundle` | `Stream` | Bundled Browserify instance stream. |
+| `bundle` | `Browserify` | Browserify instance, with some original instance options applied (`debug`). |
 | `opts` | `Object` | File and directory information. |
 
 #### `opts`
@@ -333,6 +333,32 @@ b.transform(bra, {
 });
 
 b.bundle().pipe(fs.createWriteStream('./bundle.js'));
+```
+
+### Gulp, multiple bundles and done callback
+
+When using build tools like Gulp, handling multiple bundles and done callbacks can be properly done following way:
+
+```js
+var gulp = require('gulp');
+var es = require('event-stream');
+
+gulp.task('script', function ( done ) {
+
+	var tasks = []; // Top level bundles array streams
+	var subTasks = []; // Async level bundles array streams
+
+	// Your Gulp tasks
+
+	es.merge(tasks)
+		.on('data', function () {})
+		.on('end', function () {
+			es.merge(subTasks)
+				.on('data', function () {})
+				.on('end', done);
+		});
+	
+});
 ```
 
 ## Q&A
