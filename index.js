@@ -15,7 +15,7 @@ var instanceCache = [];
 
 function shouldParseFile ( file ) {
 	var fullFilePath = resolve.sync(file, { filename: file, paths: config.modulePaths });
-	return _.contains(config.extensions, path.extname(fullFilePath)) && !multimatch(fullFilePath, config.exclude).length;
+	return _.contains(config.extensions, path.extname(fullFilePath)) && !multimatch(fullFilePath, config.exclude, { dot: true }).length;
 }
 
 function isRequireAsync ( node ) {
