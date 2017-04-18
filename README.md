@@ -361,6 +361,16 @@ gulp.task('script', function ( done ) {
 });
 ```
 
+### Running transforms inside `node_modules`
+
+If you want to shim module inside `node_modules` directory which is required directly (and not as part of local file), you should set transform explictly.
+
+```js
+if ( minimatch(fileName, '**/node_modules/{foo,bar}/**') ) {
+  b.transform('browserify-shim');
+}
+```
+
 ## Q&A
 
 ### This is similar to [Webpack code splitting][webpack-code-splitting]?
